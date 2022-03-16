@@ -7,6 +7,8 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
+import { useNavigate } from "react-router-dom";
+import ROUTES from "../../routes";
 
 interface IQuizStepperProps {}
 
@@ -29,6 +31,7 @@ const steps = [
 const QuizStepper: React.FunctionComponent<IQuizStepperProps> = (props) => {
   const theme = useTheme();
   const [activeStep, setActiveStep] = React.useState(0);
+  const navigate = useNavigate();
   const maxSteps = steps.length;
 
   const handleBack = () => {
@@ -39,7 +42,11 @@ const QuizStepper: React.FunctionComponent<IQuizStepperProps> = (props) => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
-  const handleFinish = () => {};
+  const handleFinish = () => {
+    if (window.confirm("Are you sure?")) {
+      navigate(ROUTES.RESULTS);
+    }
+  };
 
   return (
     <Box sx={{ maxWidth: theme.breakpoints.values.md, flex: 1 }}>
@@ -77,7 +84,7 @@ const QuizStepper: React.FunctionComponent<IQuizStepperProps> = (props) => {
           </Button>
         }
         nextButton={
-          activeStep < steps.length - 1 ? (
+          activeStep < maxSteps - 1 ? (
             <Button size="small" variant="contained" onClick={handleNext}>
               Next
               <KeyboardArrowRight />

@@ -9,7 +9,7 @@ import * as React from "react";
 
 interface ILayoutProps {
   mode: PaletteMode;
-  onModeChange: (mode: PaletteMode) => void;
+  onModeChange: () => void;
 }
 
 const Layout: React.FunctionComponent<ILayoutProps> = ({
@@ -17,16 +17,14 @@ const Layout: React.FunctionComponent<ILayoutProps> = ({
   onModeChange,
   children,
 }) => {
-  const handleChange = () => onModeChange(mode === "dark" ? "light" : "dark");
-
   return (
     <Box>
       <Box
         sx={{
           backgroundColor: "primary.main",
           padding: "15px",
-          display: 'flex',
-          justifyContent: 'space-between',
+          display: "flex",
+          justifyContent: "space-between",
         }}
       >
         <Typography variant="h5">Quiz for you</Typography>
@@ -35,8 +33,8 @@ const Layout: React.FunctionComponent<ILayoutProps> = ({
           control={
             <Switch
               color="secondary"
-              value={mode === "dark"}
-              onChange={handleChange}
+              checked={mode === "dark"}
+              onChange={onModeChange}
             />
           }
           label={mode.toUpperCase()}

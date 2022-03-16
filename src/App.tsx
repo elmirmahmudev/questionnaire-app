@@ -6,19 +6,30 @@ import Layout from "./components/Layout/Layout";
 import CssBaseline from "@mui/material/CssBaseline";
 import { Routes, Route } from "react-router-dom";
 import HomePage from "./components/HomePage/HomePage";
-
+import ResultPage from "./components/ResultPage/ResultPage";
+import ROUTES from "./components/routes";
 
 function App() {
-  const [mode, setMode] = useState<PaletteMode>("light");
+  const [mode, setMode] = useState<PaletteMode>(() => {
+    const mode = localStorage.getItem("paletteMode") as PaletteMode;
+    return mode || "light";
+  });
   const theme = React.useMemo(() => themeFunc(mode), [mode]);
+
+  const handleModeChange = () => {
+    const newMode = mode === "dark" ? "light" : "dark";
+    localStorage.setItem("paletteMode", newMode);
+    setMode(newMode);
+  };
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Layout onModeChange={setMode} mode={mode}>
+      <Layout onModeChange={handleModeChange} mode={mode}>
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="quiz" element={<QuizPage />} />
+          <Route path={ROUTES.HOME} element={<HomePage />} />
+          <Route path={ROUTES.QUIZ} element={<QuizPage />} />
+          <Route path={ROUTES.RESULTS} element={<ResultPage />} />
         </Routes>
       </Layout>
     </ThemeProvider>
