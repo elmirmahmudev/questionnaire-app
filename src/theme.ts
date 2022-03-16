@@ -1,7 +1,8 @@
-import { createTheme } from "@mui/material";
+import { createTheme, PaletteMode } from "@mui/material";
 import { lime, teal } from "@mui/material/colors";
 
-export const theme = createTheme({
+
+export const themeFunc = (mode: PaletteMode) => createTheme({
     components: {
         MuiButton: {
             defaultProps: {
@@ -10,6 +11,7 @@ export const theme = createTheme({
         }
     },
     palette: {
+        mode,
         primary: {
             main: teal[400],
             light: teal[300],
