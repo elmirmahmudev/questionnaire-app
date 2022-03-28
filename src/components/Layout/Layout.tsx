@@ -6,6 +6,7 @@ import {
   Typography,
 } from "@mui/material";
 import * as React from "react";
+import { QuizContext } from "../../App";
 
 interface ILayoutProps {
   mode: PaletteMode;
@@ -17,6 +18,8 @@ const Layout: React.FunctionComponent<ILayoutProps> = ({
   onModeChange,
   children,
 }) => {
+  const { quiz } = React.useContext(QuizContext);
+
   return (
     <Box>
       <Box
@@ -27,7 +30,7 @@ const Layout: React.FunctionComponent<ILayoutProps> = ({
           justifyContent: "space-between",
         }}
       >
-        <Typography variant="h5">Quiz for you</Typography>
+        <Typography variant="h5">Quiz {quiz.name && `for you "${quiz.name}"`}</Typography>
         <FormControlLabel
           value={mode}
           control={

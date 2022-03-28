@@ -2,13 +2,17 @@ import { Button, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
+import { QuizContext } from "../../App";
 import ROUTES from "../routes";
 
 interface IHomePageProps {}
 
 const HomePage: React.FunctionComponent<IHomePageProps> = (props) => {
+  const [name, setName] = React.useState("");
+  const { quiz, setQuiz } = React.useContext(QuizContext);
   const navigate = useNavigate();
   const handleSubmit = () => {
+    setQuiz({ ...quiz, name });
     navigate(ROUTES.QUIZ);
   };
   return (
@@ -25,6 +29,8 @@ const HomePage: React.FunctionComponent<IHomePageProps> = (props) => {
           placeholder="Full name"
           name="full-name"
           autoFocus
+          value={name}
+          onChange={(e) => setName(e.target.value)}
         />
         <Button
           type="submit"

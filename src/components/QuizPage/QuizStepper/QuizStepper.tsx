@@ -9,28 +9,34 @@ import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { useNavigate } from "react-router-dom";
 import ROUTES from "../../routes";
+import { questionsData } from "../../../questionsData";
+import {
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  Radio,
+  RadioGroup,
+} from "@mui/material";
+import { QuizContext } from "../../../App";
 
 interface IQuizStepperProps {}
 
 const steps = [
   {
     label: "Question 1",
-    description: `For each ad campaign `,
   },
   {
     label: "Question 2",
-    description:
-      "An ad group contains one or more ads which target a shared set of keywords.",
   },
   {
     label: "Question 3",
-    description: `Try out different ad `,
   },
 ];
 
 const QuizStepper: React.FunctionComponent<IQuizStepperProps> = (props) => {
   const theme = useTheme();
   const [activeStep, setActiveStep] = React.useState(0);
+  const { quiz, setQuiz } = React.useContext(QuizContext);
   const navigate = useNavigate();
   const maxSteps = steps.length;
 
@@ -46,6 +52,35 @@ const QuizStepper: React.FunctionComponent<IQuizStepperProps> = (props) => {
     if (window.confirm("Are you sure?")) {
       navigate(ROUTES.RESULTS);
     }
+  };
+  const isSingleAnswer = questionsData[activeStep].answers.length === 1;
+
+  const currentUserAnswer = () =>
+    quiz.userAnswers.find((obj) => obj.id === questionsData[activeStep].id);
+
+  const toggleArrayItem = (arr: string[], value: string) => {
+    if (!arr.includes(value)) {
+      arr.push(value);
+    } else {
+      arr.splice(arr.indexOf(value), 1);
+    }
+    return arr;
+  };
+
+  const handleOptionChange = (id: number, value: string) => {
+    setQuiz({
+      ...quiz,
+      userAnswers: quiz.userAnswers.map((answerObj) => {
+        return answerObj.id === id
+          ? {
+              id,
+              answers: isSingleAnswer
+                ? [value]
+                : toggleArrayItem([...answerObj.answers], value),
+            }
+          : answerObj;
+      }),
+    });
   };
 
   return (
@@ -63,8 +98,53 @@ const QuizStepper: React.FunctionComponent<IQuizStepperProps> = (props) => {
       >
         <Typography>{steps[activeStep].label}</Typography>
       </Paper>
-      <Box sx={{ height: 255, maxWidth: 400, width: "100%", p: 2 }}>
-        {steps[activeStep].description}
+      <Box sx={{ height: 255, width: "100%", p: 2 }}>
+        <Typography variant="h5">
+          {questionsData[activeStep].question}
+        </Typography>
+        {isSingleAnswer ? (
+          <RadioGroup
+            sx={{ width: "fit-content" }}
+            aria-label="quiz-options"
+            name="radio-buttons-group"
+            value={currentUserAnswer()?.answers[0] ?? ""}
+            onChange={(e) => {
+              handleOptionChange(questionsData[activeStep].id, e.target.value);
+            }}
+          >
+            {questionsData[activeStep].options.map((option) => (
+              <FormControlLabel
+                key={option}
+                value={option ?? ""}
+                control={<Radio />}
+                label={option}
+              />
+            ))}
+          </RadioGroup>
+        ) : (
+          <FormGroup
+          sx={{ width: "fit-content" }}
+          >
+            {questionsData[activeStep].options.map((option) => (
+              <FormControlLabel
+                key={option}
+                control={
+                  <Checkbox
+                    onChange={(e) => {
+                      handleOptionChange(
+                        questionsData[activeStep].id,
+                        e.target.value
+                      );
+                    }}
+                    checked={currentUserAnswer()?.answers.includes(option)}
+                    value={option ?? ""}
+                  />
+                }
+                label={option}
+              />
+            ))}
+          </FormGroup>
+        )}
       </Box>
       <MobileStepper
         sx={{ userSelect: "none" }}
